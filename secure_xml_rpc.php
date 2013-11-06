@@ -42,6 +42,7 @@ define( 'XMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
 
 // Require includes
 require_once( 'includes/XMLRPCS_Profile.php' );
+require_once( 'includes/class-secure-xmlrpc-server.php' );
 
 /**
  * Default initialization for the plugin:
@@ -73,10 +74,22 @@ function xmlrpcs_deactivate() {
 }
 register_deactivation_hook( __FILE__, 'xmlrpcs_deactivate' );
 
+/**
+ * Replace default server implementation with custom subclass.
+ *
+ * @param string $server_class
+ *
+ * @return string
+ */
+function xmlrpcs_server( $server_class ) {
+	return 'secure_xmlrpc_server';
+}
+
 // Wireup actions
 add_action( 'init', 'xmlrpcs_init' );
 add_action( 'show_user_profile', array( 'XMLRPCS_Profile', 'append_secure_keys' ), 10, 1 );
 
 // Wireup filters
+add_filter( 'wp_xmlrpc_server_class', 'xmlrpcs_server' );
 
 // Wireup shortcodes
