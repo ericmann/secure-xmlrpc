@@ -40,6 +40,9 @@ define( 'XMLRPCS_VERSION', '0.1.0' );
 define( 'XMLRPCS_URL',     plugin_dir_url( __FILE__ ) );
 define( 'XMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
 
+// Require includes
+require_once( 'includes/XMLRPCS_Profile.php' );
+
 /**
  * Default initialization for the plugin:
  * - Registers the default textdomain.
@@ -72,6 +75,7 @@ register_deactivation_hook( __FILE__, 'xmlrpcs_deactivate' );
 
 // Wireup actions
 add_action( 'init', 'xmlrpcs_init' );
+add_action( 'show_user_profile', array( 'XMLRPCS_Profile', 'append_secure_keys' ), 10, 1 );
 
 // Wireup filters
 
