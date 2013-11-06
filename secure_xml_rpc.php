@@ -7,7 +7,7 @@
  * Author:      Eric Mann
  * Author URI:  http://eamann.com
  * License:     GPLv2+
- * Text Domain: sxmlrpcs
+ * Text Domain: xmlrpcs
  * Domain Path: /languages
  */
 
@@ -36,42 +36,42 @@
  */
 
 // Useful global constants
-define( 'SXMLRPCS_VERSION', '0.1.0' );
-define( 'SXMLRPCS_URL',     plugin_dir_url( __FILE__ ) );
-define( 'SXMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
+define( 'XMLRPCS_VERSION', '0.1.0' );
+define( 'XMLRPCS_URL',     plugin_dir_url( __FILE__ ) );
+define( 'XMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
 
 /**
  * Default initialization for the plugin:
  * - Registers the default textdomain.
  */
-function sxmlrpcs_init() {
-	$locale = apply_filters( 'plugin_locale', get_locale(), 'sxmlrpcs' );
-	load_textdomain( 'sxmlrpcs', WP_LANG_DIR . '/sxmlrpcs/sxmlrpcs-' . $locale . '.mo' );
-	load_plugin_textdomain( 'sxmlrpcs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+function xmlrpcs_init() {
+	$locale = apply_filters( 'plugin_locale', get_locale(), 'xmlrpcs' );
+	load_textdomain( 'xmlrpcs', WP_LANG_DIR . '/xmlrpcs/xmlrpcs-' . $locale . '.mo' );
+	load_plugin_textdomain( 'xmlrpcs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 
 /**
  * Activate the plugin
  */
-function sxmlrpcs_activate() {
+function xmlrpcs_activate() {
 	// First load the init scripts in case any rewrite functionality is being loaded
-	sxmlrpcs_init();
+	xmlrpcs_init();
 
 	flush_rewrite_rules();
 }
-register_activation_hook( __FILE__, 'sxmlrpcs_activate' );
+register_activation_hook( __FILE__, 'xmlrpcs_activate' );
 
 /**
  * Deactivate the plugin
  * Uninstall routines should be in uninstall.php
  */
-function sxmlrpcs_deactivate() {
+function xmlrpcs_deactivate() {
 
 }
-register_deactivation_hook( __FILE__, 'sxmlrpcs_deactivate' );
+register_deactivation_hook( __FILE__, 'xmlrpcs_deactivate' );
 
 // Wireup actions
-add_action( 'init', 'sxmlrpcs_init' );
+add_action( 'init', 'xmlrpcs_init' );
 
 // Wireup filters
 
