@@ -44,9 +44,6 @@ define( 'XMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
 require_once( 'includes/XMLRPCS_Profile.php' );
 require_once( 'includes/class-secure-xmlrpc-server.php' );
 
-// Set up our pseudo-namespace
-XMLRPCS_Profile::setup();
-
 /**
  * Default initialization for the plugin:
  * - Registers the default textdomain.
@@ -89,10 +86,13 @@ function xmlrpcs_server( $server_class ) {
 }
 
 // Wireup actions
-add_action( 'init', 'xmlrpcs_init' );
-add_action( 'show_user_profile', array( 'XMLRPCS_Profile', 'append_secure_keys' ), 10, 1 );
+add_action( 'init',                  'xmlrpcs_init' );
+add_action( 'show_user_profile',     array( 'XMLRPCS_Profile', 'append_secure_keys' ), 10, 1 );
+add_action( 'admin_enqueue_scripts', array( 'XMLRPCS_Profile', 'admin_enqueues' )            );
+add_action( 'profile_update',        array( 'XMLRPCS_Profile', 'profile_update' ),     10, 1 );
 
 // Wireup filters
 add_filter( 'wp_xmlrpc_server_class', 'xmlrpcs_server' );
 
-// Wireup shortcodes
+// Wireup ajax
+add_action( 'wp_ajax_xmlrpcs_new_app', array( 'XMLRPCS_Profile', 'new_app' ) );

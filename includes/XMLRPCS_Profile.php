@@ -1,15 +1,6 @@
 <?php
 class XMLRPCS_Profile {
 	/**
-	 * Treat our static class as a pseudo namespace and register our actions/filters/other hooks.
-	 */
-	public static function setup() {
-		add_action( 'admin_enqueue_scripts', array( 'XMLRPCS_Profile', 'admin_enqueues' ) );
-
-		add_action( 'wp_ajax_xmlrpcs_new_app', array( 'XMLRPCS_Profile', 'new_app' ) );
-	}
-
-	/**
 	 * Enqueue our admin-side scripts, styles, and localizations
 	 */
 	public static function admin_enqueues() {
@@ -83,8 +74,8 @@ class XMLRPCS_Profile {
 				$secret = get_user_meta( $profileuser->ID, '_xmlrpcs_secret_' . $key, true );
 
 				$output .= '<tr>';
-				$output .= '<td><input class="app_name" type="text" value="' . esc_attr( $app ) . '" /></td>';
-				$output .= '<td><input class="app_key" type="text" value="' . esc_attr( $key ) . '" readonly /></td>';
+				$output .= '<td><input name="xmlrpcs_app[]" class="app_name" type="text" value="' . esc_attr( $app ) . '" /></td>';
+				$output .= '<td><input name="xmlrpcs_key[]" class="app_key" type="text" value="' . esc_attr( $key ) . '" readonly /></td>';
 				$output .= '<td><input class="app_key" type="text" value="' . esc_attr( $secret ) . '" readonly /></td>';
 				$output .= '<td><span class="dashicons dashicons-no xmlrpcs-delete"></span></td>';
 				$output .= '</tr>';
@@ -119,11 +110,50 @@ class XMLRPCS_Profile {
 
 		// Generate the output
 		echo '<tr>';
-		echo '<td><input class="app_name" type="text" value="' . esc_attr__( 'New Application', 'xmlrpcs' ) . '" /></td>';
-		echo '<td><input class="app_key" type="text" value="' . esc_attr( $key ) . '" readonly /></td>';
+		echo '<td><input name="xmlrpcs_app[]" class="app_name" type="text" value="' . esc_attr__( 'New Application', 'xmlrpcs' ) . '" /></td>';
+		echo '<td><input name="xmlrpcs_key[]" class="app_key" type="text" value="' . esc_attr( $key ) . '" readonly /></td>';
 		echo '<td><input class="app_key" type="text" value="' . esc_attr( $secret ) . '" readonly /></td>';
 		echo '<td><span class="dashicons dashicons-no xmlrpcs-delete"></span></td>';
 		echo '</tr>';
 		die();
+	}
+
+	/**
+	 * Update the user's secure keys.
+	 *
+	 * @param $user_id
+	 */
+	public static function profile_update( $user_id ) {
+		// Get the current user
+		$user = wp_get_current_user();
+
+		// Can only edit your own profile!!!
+		if ( $user_id !== $user->ID ) {
+			return;
+		}
+
+		// Get the POSTed data
+		$apps = $_POST['xmlrpcs_app'];
+		$keys = $_POST['xmlrpcs_key'];
+		$apps = array_map( 'sanitize_text_field', $apps );
+		$keys = array_map( 'sanitize_text_field', $keys );
+
+		// Get the user's existing keys so we can remove any that have been deleted
+		$existing = get_user_meta( $user_id, '_xmlrpcs' );
+		$to_remove = array_diff( $existing, $keys );
+
+		foreach( $to_remove as $remove ) {
+			delete_user_meta( $user_id, "_xmlrpcs_secret_{$remove}" );
+			delete_user_meta( $user_id, "_xmlrpcs_app_{$remove}" );
+		}
+
+		// Remove existing keys so we can update just the ones we want to keep
+		delete_user_meta( $user_id, '_xmlrpcs' );
+
+		// Update the application names
+		foreach( $keys as $index => $key ) {
+			add_user_meta( $user_id, '_xmlrpcs', $key );
+			update_user_meta( $user_id, "_xmlrpcs_app_{$key}", $apps[ $index ] );
+		}
 	}
 }
