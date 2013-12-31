@@ -1,9 +1,9 @@
 === Secure XML-RPC ===
-Contributors:      10up
+Contributors:      ericmann
 Donate link:       http://wordpress.org/plugins/secure-xmlrpc
-Tags: 
-Requires at least: 3.5.1
-Tested up to:      3.5.1
+Tags:              xmlrpc, security, oauth, authentication
+Requires at least: 3.8
+Tested up to:      3.8
 Stable tag:        0.1.0
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
