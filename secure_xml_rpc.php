@@ -93,6 +93,7 @@ add_action( 'profile_update',        array( 'XMLRPCS_Profile', 'profile_update' 
 
 // Wireup filters
 add_filter( 'wp_xmlrpc_server_class', 'xmlrpcs_server' );
+add_filter( 'authenticate',           array( 'XMLRPCS_Profile', 'authenticate', 10, 3 ) );
 
 // Wireup ajax
 add_action( 'wp_ajax_xmlrpcs_new_app', array( 'XMLRPCS_Profile', 'new_app' ) );

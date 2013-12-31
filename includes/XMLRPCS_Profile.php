@@ -156,4 +156,67 @@ class XMLRPCS_Profile {
 			update_user_meta( $user_id, "_xmlrpcs_app_{$key}", $apps[ $index ] );
 		}
 	}
+
+	/**
+	 * Overload the authentication system to authenticate using headers instead of by username/password.
+	 *
+	 * @param null|WP_User $user
+	 * @param string       $username
+	 * @param string       $password
+	 *
+	 * @return null|WP_Error|WP_User
+	 */
+	public static function authenticate( $user, $username, $password ) {
+		// Bail if this isn't an XML-RPC request.
+		if ( ! defined( 'XMLRPC_REQUEST' ) || ! XMLRPC_REQUEST ) {
+			return $user;
+		}
+
+		// If the user is already logged in, do nothing.
+		if ( is_a( $user, 'WP_User' ) ) {
+			return $user;
+		}
+
+		// Get the authentication information from the POST headers
+		$headers = http_get_request_headers();
+		$tokens = explode( '||', $headers['Authorization'] );
+		$key = $tokens[0];
+		$hash = $tokens[1];
+
+		// Lookup the user based on the key passed in.
+		$user_query = new WP_User_Query(
+			array(
+			     'meta_query' => array(
+				     array(
+					     'key' => '_xmlrpcs',
+					     'value' => $key
+				     )
+			     )
+			)
+		);
+
+		// If we don't find anyone, bail.
+		if ( count( $user_query->results ) === 0 ) {
+			return $user;
+		}
+
+		// OK, we've found someone. Now, verify the hashes match.
+		$found_id = $user_query->results[0];
+		$secret = get_user_meta( $found_id, "_xmlrpc_secret_{$key}", true );
+
+		if ( ! $secret ) {
+			return $user;
+		}
+
+		// Calculate the hash independently
+		$body = http_get_request_body();
+		$calculated = hash( 'sha256', $secret . $body, true );
+		$calculated = base64_encode( $calculated );
+
+		if ( $calculated === $hash ) {
+			return get_user_by( 'id', $found_id );
+		} else {
+			return $user;
+		}
+	}
 }
