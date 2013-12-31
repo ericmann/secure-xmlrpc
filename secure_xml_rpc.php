@@ -44,6 +44,9 @@ define( 'XMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
 require_once( 'includes/XMLRPCS_Profile.php' );
 require_once( 'includes/class-secure-xmlrpc-server.php' );
 
+// Set up our pseudo-namespace
+XMLRPCS_Profile::setup();
+
 /**
  * Default initialization for the plugin:
  * - Registers the default textdomain.

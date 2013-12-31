@@ -1,23 +1,129 @@
 <?php
 class XMLRPCS_Profile {
 	/**
+	 * Treat our static class as a pseudo namespace and register our actions/filters/other hooks.
+	 */
+	public static function setup() {
+		add_action( 'admin_enqueue_scripts', array( 'XMLRPCS_Profile', 'admin_enqueues' ) );
+
+		add_action( 'wp_ajax_xmlrpcs_new_app', array( 'XMLRPCS_Profile', 'new_app' ) );
+	}
+
+	/**
+	 * Enqueue our admin-side scripts, styles, and localizations
+	 */
+	public static function admin_enqueues() {
+		$screen = get_current_screen();
+		if ( 'profile' !== $screen->base ) {
+			return;
+		}
+
+		$ext = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.js' : '.min.js';
+
+		wp_enqueue_script( 'xmlrpcs', XMLRPCS_URL . "/assets/js/secure_xml_rpc{$ext}", array( 'jquery' ), XMLRPCS_VERSION, true );
+		wp_localize_script(
+			'xmlrpcs',
+			'xmlrpcs',
+			array(
+			     'ajaxurl'   => admin_url( 'admin-ajax.php' ),
+			     'confirm_delete' => __( 'Are you sure you wish to remove this application? This action cannot be undone.', 'xmlrpcs' ),
+			     'new_nonce' => wp_create_nonce( 'xmlrpcs_new_app' ),
+			)
+		);
+
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			wp_enqueue_style( 'xmlrpcs', XMLRPCS_URL . "/assets/css/src/secure_xml_rpc.css", array(), XMLRPCS_VERSION );
+		} else {
+			wp_enqueue_style( 'xmlrpcs', XMLRPCS_URL . "/assets/css/secure_xml_rpc.min.css", array(), XMLRPCS_VERSION );
+		}
+	}
+
+	/**
 	 * Append the new UI to the user profile.
 	 *
 	 * @param WP_User $profileuser
 	 */
 	public static function append_secure_keys( $profileuser ) {
 		?>
-<h3><?php _e( 'Remote Publishing Permissions', 'xmlrpcs' ); ?></h3>
-<table class="form-table">
+<h3><?php esc_html_e( 'Remote Publishing Permissions', 'xmlrpcs' ); ?></h3>
+<table class="form-table xmlrpcs_permissions">
+<tbody>
 	<tr>
-		<th scope="row"><?php _e( 'Allowed applications', 'xmlrpcs' ); ?></th>
-		<td></td>
+		<th scope="row"><?php esc_html_e( 'Allowed applications', 'xmlrpcs' ); ?></th>
+		<td><?php echo XMLRPCS_Profile::secure_keys_list( $profileuser ); ?></td>
 	</tr>
 	<tr>
-		<th scope="row"><?php _e( 'Add a new application', 'xmlrpcs' ); ?></th>
-		<td><a id="xmlrpcs-generate" href=""><?php _e( 'Generate application keys', 'xmlrpcs' ); ?></a></td>
+		<th scope="row"><?php esc_html_e( 'Add a new application', 'xmlrpcs' ); ?></th>
+		<td><a id="xmlrpcs-generate" href=""><?php esc_html_e( 'Generate application keys', 'xmlrpcs' ); ?></a></td>
 	</tr>
+</tbody>
 </table>
 <?php
+	}
+
+	/**
+	 * Generate a table of the secure keys for the given user.
+	 *
+	 * @param WP_User $profileuser
+	 *
+	 * @return string
+	 */
+	public static function secure_keys_list( $profileuser ) {
+		$keys = get_user_meta( $profileuser->ID, '_xmlrpcs' );
+
+		$output = '<table id="xmlrpcs_app_body">';
+		$output .= '<thead>';
+		$output .= '<tr><th>' . esc_html__( 'Application', 'xmlrpcs' ) . '</th><th>' . esc_html__( 'Public Key', 'xmlrpcs' ) . '</th><th>' . esc_html__( 'Secret Key', 'xmlrcps' ) . '</th></tr>';
+		$output .= '</thead>';
+		$output .= '<tbody>';
+
+		if ( count( $keys ) > 0 ) {
+			foreach( $keys as $key ) {
+				$app = get_user_meta( $profileuser->ID, '_xmlrpcs_app_' . $key, true );
+				$secret = get_user_meta( $profileuser->ID, '_xmlrpcs_secret_' . $key, true );
+
+				$output .= '<tr>';
+				$output .= '<td><input class="app_name" type="text" value="' . esc_attr( $app ) . '" /></td>';
+				$output .= '<td><input class="app_key" type="text" value="' . esc_attr( $key ) . '" readonly /></td>';
+				$output .= '<td><input class="app_key" type="text" value="' . esc_attr( $secret ) . '" readonly /></td>';
+				$output .= '<td><span class="dashicons dashicons-no xmlrpcs-delete"></span></td>';
+				$output .= '</tr>';
+			}
+		} else {
+			$output .= '<tr id="xmlrpcs-no-apps"><td colspan="4">' . esc_html__( 'No applications currently authorized' ) . '</td></tr>';
+		}
+
+		$output .= '</tbody></table>';
+
+		return $output;
+	}
+
+	/**
+	 * Create a new app for the current user.
+	 */
+	public static function new_app() {
+		if ( ! wp_verify_nonce( $_POST['_nonce'] , 'xmlrpcs_new_app' ) ) {
+			wp_send_json_error();
+		}
+
+		// Get the current user
+		$user = wp_get_current_user();
+
+		// Generate a set of unique keys
+		$key = apply_filters( 'xmlrpcs_public_key', wp_hash( time() . rand(), 'auth' ) );;
+		$secret = apply_filters( 'xmlprcs_secret_key', wp_hash( time() . rand() . $key, 'auth' ) );
+
+		add_user_meta( $user->ID, '_xmlrpcs', $key, false );
+		add_user_meta( $user->ID, "_xmlrpcs_secret_{$key}", $secret, true );
+		add_user_meta( $user->ID, "_xmlrpcs_app_{$key}", __( 'New Application', 'xmlrpcs' ), true );
+
+		// Generate the output
+		echo '<tr>';
+		echo '<td><input class="app_name" type="text" value="' . esc_attr__( 'New Application', 'xmlrpcs' ) . '" /></td>';
+		echo '<td><input class="app_key" type="text" value="' . esc_attr( $key ) . '" readonly /></td>';
+		echo '<td><input class="app_key" type="text" value="' . esc_attr( $secret ) . '" readonly /></td>';
+		echo '<td><span class="dashicons dashicons-no xmlrpcs-delete"></span></td>';
+		echo '</tr>';
+		die();
 	}
 }

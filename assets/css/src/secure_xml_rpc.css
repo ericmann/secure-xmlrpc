@@ -5,3 +5,21 @@
  * Copyright (c) 2013 Eric Mann
  * Licensed under the GPLv2+ license.
  */
+
+.xmlrpcs_permissions td {
+	padding: 0;
+}
+
+#xmlrpcs_app_body th {
+	padding-bottom: 0;
+}
+
+#xmlrpcs_app_body td {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.xmlrpcs-delete {
+	color: red;
+	cursor: pointer;
+}
