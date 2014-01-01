@@ -178,8 +178,11 @@ class XMLRPCS_Profile {
 		}
 
 		// Get the authentication information from the POST headers
-		$headers = http_get_request_headers();
-		$tokens = explode( '||', $headers['Authorization'] );
+		if ( ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
+			return $user;
+		}
+
+		$tokens = explode( '||', $_SERVER['HTTP_AUTHORIZATION'] );
 		$key = $tokens[0];
 		$hash = $tokens[1];
 
@@ -201,20 +204,19 @@ class XMLRPCS_Profile {
 		}
 
 		// OK, we've found someone. Now, verify the hashes match.
-		$found_id = $user_query->results[0];
-		$secret = get_user_meta( $found_id, "_xmlrpc_secret_{$key}", true );
+		$found = $user_query->results[0];
+		$secret = get_user_meta( $found->ID, "_xmlrpcs_secret_{$key}", true );
 
 		if ( ! $secret ) {
 			return $user;
 		}
 
 		// Calculate the hash independently
-		$body = http_get_request_body();
-		$calculated = hash( 'sha256', $secret . $body, true );
-		$calculated = base64_encode( $calculated );
+		$body = @file_get_contents('php://input');
+		$calculated = hash( 'sha256', $secret . $body );
 
 		if ( $calculated === $hash ) {
-			return get_user_by( 'id', $found_id );
+			return $found;
 		} else {
 			return $user;
 		}
