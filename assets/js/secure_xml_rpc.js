@@ -49,6 +49,7 @@
 		$( this ).parents( 'tr' ).first().remove();
 	};
 
+	// Bind events
 	$( document.getElementById( 'xmlrpcs-generate' ) ).on( 'click', add_row );
 	$( '.xmlrpcs-delete' ).on( 'click', remove_row );
 

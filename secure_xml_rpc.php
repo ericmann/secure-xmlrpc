@@ -55,26 +55,6 @@ function xmlrpcs_init() {
 }
 
 /**
- * Activate the plugin
- */
-function xmlrpcs_activate() {
-	// First load the init scripts in case any rewrite functionality is being loaded
-	xmlrpcs_init();
-
-	flush_rewrite_rules();
-}
-register_activation_hook( __FILE__, 'xmlrpcs_activate' );
-
-/**
- * Deactivate the plugin
- * Uninstall routines should be in uninstall.php
- */
-function xmlrpcs_deactivate() {
-
-}
-register_deactivation_hook( __FILE__, 'xmlrpcs_deactivate' );
-
-/**
  * Replace default server implementation with custom subclass.
  *
  * @param string $server_class
