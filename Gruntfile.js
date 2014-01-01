@@ -118,7 +118,8 @@ module.exports = function( grunt ) {
 					'!package.json',
 					'!.gitignore',
 					'!.gitmodules',
-				    '!WordPress.org assets/**'
+				    '!WordPress.org assets/**',
+				    '!readme.md'
 				],
 				dest: 'release/<%= pkg.version %>/'
 			}		
