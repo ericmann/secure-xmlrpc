@@ -37,7 +37,8 @@ Say your application has the following information:
 
 And you want to make the following request (whitespace/indentation added for readability):
 
-`<?xml version="1.0"?>
+```
+<?xml version="1.0"?>
 <methodCall>
   <methodName>wp.getPosts</methodName>
   <params>
@@ -51,7 +52,8 @@ And you want to make the following request (whitespace/indentation added for rea
       <value><string></string></value>
     </param>
   </params>
-</methodCall>`
+</methodCall>
+```
 
 Note that the second and third parameters (traditionally `username` and `password`) are empty.  Usernames and passwords can still be specified, but will result in the server returning an `X-Deprecated` header.
 
