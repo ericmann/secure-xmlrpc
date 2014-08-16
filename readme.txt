@@ -1,5 +1,5 @@
 === Secure XML-RPC ===
-Contributors:      ericmann
+Contributors:      ericmann, skreutzer
 Donate link:       http://wordpress.org/plugins/secure-xmlrpc
 Tags:              xmlrpc, security, oauth, authentication
 Requires at least: 3.8
@@ -24,6 +24,7 @@ New applications can be added whenever you want.  You can also change the names 
 
 1. Upload the entire `/secure-xml-rpc` directory to the `/wp-content/plugins/` directory.
 2. Activate Secure XML-RPC through the 'Plugins' menu in WordPress.
+3. Make sure that either the .httaccess or the httpd.conf (under `<VirtualHost>`) contains `SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1`.
 
 == Frequently Asked Questions ==
 
