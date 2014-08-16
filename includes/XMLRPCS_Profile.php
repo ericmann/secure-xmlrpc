@@ -213,7 +213,7 @@ class XMLRPCS_Profile {
 
 		// Calculate the hash independently
 		$body = @file_get_contents('php://input');
-		$calculated = hash( 'sha256', $secret . $body );
+		$calculated = base64_encode(hash( 'sha256', $secret . $body ));
 
 		if ( $calculated === $hash ) {
 			return $found;
