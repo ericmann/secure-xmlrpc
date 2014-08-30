@@ -59,10 +59,7 @@ module.exports = function( grunt ) {
 				}
 			}
 		},
-		test:   {
-			files: ['assets/js/test/**/*.js']
-		},
-		
+
 		cssmin: {
 			options: {
 				banner: '/*! <%= pkg.title %> - v<%= pkg.version %>\n' +
@@ -82,7 +79,6 @@ module.exports = function( grunt ) {
 			}
 		},
 		watch:  {
-			
 			styles: {
 				files: ['assets/css/src/*.css'],
 				tasks: ['cssmin'],
@@ -143,7 +139,6 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
-	
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks( 'grunt-contrib-clean' );
 	grunt.loadNpmTasks( 'grunt-contrib-copy' );
