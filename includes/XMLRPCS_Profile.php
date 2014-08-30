@@ -128,7 +128,7 @@ class XMLRPCS_Profile {
 		$user = wp_get_current_user();
 
 		// Generate a set of unique keys
-		$key = apply_filters( 'xmlrpcs_public_key', wp_hash( time() . rand(), 'auth' ) );;
+		$key = apply_filters( 'xmlrpcs_public_key', wp_hash( time() . rand(), 'auth' ) );
 		$secret = apply_filters( 'xmlprcs_secret_key', wp_hash( time() . rand() . $key, 'auth' ) );
 
 		add_user_meta( $user->ID, '_xmlrpcs', $key, false );

@@ -77,6 +77,12 @@ Some developers raised concerns about [length extension attacks](https://blog.wh
 
 The double-hash is similar to but simpler than HMAC and is fairly easy to implement in any programming language. Just note, PHP's `hash()` function returns a base64-encoded string, not a raw hash of the data passed in.
 
+= Do I have to copy/paste my application keys into remote systems? =
+
+Not necessarily.
+
+The latest version of the plugin adds a new XML-RPC method to the system that allows for the generation of user-specific application keys remotely. _Please only ever call this method over a secure/trusted network connection_ when setting up an application for the first time.
+
 == Screenshots ==
 
 1. The new Remote Publishing Permissions area of the user profile.
@@ -84,6 +90,7 @@ The double-hash is similar to but simpler than HMAC and is fairly easy to implem
 == Changelog ==
 
 = DEV =
+* New: Add a custom RPC method for generating application keys remotely.
 * Dev change: Move all functional implementations inside our pseudo-namespace.
 * Dev change: Use a constant-time string comparison method for better security and less data leakage during authentication.
 * Dev change: Use a double-hash to prevent any potential length-extension attacks.

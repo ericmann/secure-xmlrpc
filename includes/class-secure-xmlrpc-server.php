@@ -109,6 +109,9 @@ class secure_xmlrpc_server extends wp_xmlrpc_server {
 		$methods['mt.setPostCategories']    = array ( $this, 'mt_setPostCategories' );
 		$methods['mt.publishPost']          = array ( $this, 'mt_publishPost' );
 
+		// Application methods
+		$methods['xmlrpcs.createApplication'] = array( $this, 'xmlrpcs_createApplication' );
+
 		return $methods;
 	}
 
@@ -1040,5 +1043,56 @@ class secure_xmlrpc_server extends wp_xmlrpc_server {
 			$this->deprecated();
 
 		return parent::mt_publishPost( $args );
+	}
+
+	// Custom Security Methods
+
+	/**
+	 * Create a new set of application keys and return them to the requestor.
+	 *
+	 * @param array $args
+	 *
+	 * @return array Application information
+	 */
+	public function xmlrpcs_createApplication( $args ) {
+		if ( ! $this->minimum_args( $args, 3 ) ) {
+			return $this->error;
+		}
+
+		$this->escape( $args );
+
+		$blog_id  = (int) $args[0];
+		$username = $args[1];
+		$password = $args[2];
+		$app_name = $args[3];
+
+		// Log the user in
+		if ( ! $user = $this->login( $username, $password ) ) {
+			return $this->error;
+		}
+
+		// If the application name isn't valid, err
+		if ( empty( $app_name ) ) {
+			return $this->error;
+		}
+
+		/** This action is documented in wp-includes/class-wp-xmlrpc-server.php */
+		do_action( 'xmlrpc_call', 'xmlrpcs.createApplication' );
+
+		// Create application keys
+		$key = apply_filters( 'xmlrpcs_public_key', wp_hash( time() . rand(), 'auth' ) );
+		$secret = apply_filters( 'xmlprcs_secret_key', wp_hash( time() . rand() . $key, 'auth' ) );
+
+		// Add the application
+		add_user_meta( $user->ID, '_xmlrpcs', $key, false );
+		add_user_meta( $user->ID, "_xmlrpcs_secret_{$key}", $secret, true );
+		add_user_meta( $user->ID, "_xmlrpcs_app_{$key}", $app_name, true );
+
+		// Return our data to the requestor
+		return array(
+			'app'    => $app_name,
+			'key'    => $key,
+			'secret' => $secret
+		);
 	}
 }
