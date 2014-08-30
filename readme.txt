@@ -105,3 +105,7 @@ The hashing mechanism for generating authentication headers has changed slightly
 
 = 0.1.0 =
 First Release
+
+== Additional Information ==
+
+Lock graphic designed by Scott Lewis from the thenounproject.com
