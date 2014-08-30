@@ -240,7 +240,7 @@ class XMLRPCS_Profile {
 
 		// Calculate the hash independently
 		$body = @file_get_contents('php://input');
-		$calculated = hash( 'sha256', $secret . $body );
+		$calculated = hash( 'sha256', $secret . hash( 'sha256', $secret . $body ) );
 
 		if ( self::compareString( $calculated, $hash ) ) {
 			return $found;
