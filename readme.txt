@@ -4,7 +4,7 @@ Donate link:       http://wordpress.org/plugins/secure-xmlrpc
 Tags:              xmlrpc, security, oauth, authentication
 Requires at least: 3.8
 Tested up to:      4.0
-Stable tag:        0.1.0
+Stable tag:        1.0.0
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -89,7 +89,7 @@ The latest version of the plugin adds a new XML-RPC method to the system that al
 
 == Changelog ==
 
-= DEV =
+= 1.0.0 =
 * New: Add a custom RPC method for generating application keys remotely.
 * Dev change: Move all functional implementations inside our pseudo-namespace.
 * Dev change: Use a constant-time string comparison method for better security and less data leakage during authentication.
@@ -100,7 +100,7 @@ The latest version of the plugin adds a new XML-RPC method to the system that al
 
 == Upgrade Notice ==
 
-= DEV =
+= 1.0.0 =
 The hashing mechanism for generating authentication headers has changed slightly. Please refer to the FAWs for an example of how things work with a double-hash in the newest version.
 
 = 0.1.0 =

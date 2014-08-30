@@ -2,7 +2,7 @@
   "name": "secure-xml-rpc",
   "title": "Secure XML-RPC",
   "description": "More secure wrapper for the WordPress XML-RPC interface.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "homepage": "http://wordpress.org/plugins/secure-xmlrpc",
   "author": {
     "name": "Eric Mann",

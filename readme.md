@@ -89,7 +89,7 @@ Screenshots
 Changelog
 ---------
 
-**DEV**
+**1.0.0**
 
 - New: Add a custom RPC method for generating application keys remotely.
 - Dev change: Move all functional implementations inside our pseudo-namespace.
@@ -103,7 +103,7 @@ Changelog
 Upgrade Notice
 --------------
 
-**DEV**
+**1.0.0**
 
 The hashing mechanism for generating authentication headers has changed slightly. Please refer to the FAWs for an example of how things work with a double-hash in the newest version.
 
@@ -119,6 +119,6 @@ Donate link:       http://wordpress.org/plugins/secure-xmlrpc
 Tags:              xmlrpc, security, oauth, authentication
 Requires at least: 3.8
 Tested up to:      4.0
-Stable tag:        0.1.0
+Stable tag:        1.0.0
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html

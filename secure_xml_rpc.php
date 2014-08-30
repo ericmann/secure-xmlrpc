@@ -3,7 +3,7 @@
  * Plugin Name: Secure XML-RPC
  * Plugin URI:  http://wordpress.org/plugins/secure-xmlrpc
  * Description: More secure wrapper for the WordPress XML-RPC interface.
- * Version:     0.1.0
+ * Version:     1.0.0
  * Author:      Eric Mann
  * Author URI:  http://eamann.com
  * License:     GPLv2+
@@ -36,7 +36,7 @@
  */
 
 // Useful global constants
-define( 'XMLRPCS_VERSION', '0.1.0' );
+define( 'XMLRPCS_VERSION', '1.0.0' );
 define( 'XMLRPCS_URL',     plugin_dir_url( __FILE__ ) );
 define( 'XMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
 
