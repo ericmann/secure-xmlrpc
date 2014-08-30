@@ -77,6 +77,9 @@ In this paradigm, application secret keys should _also_ be treated as passwords 
 
 == Changelog ==
 
+= DEV =
+* Dev change: Move all functional implementations inside our pseudo-namespace.
+
 = 0.1.0 =
 * First release
 

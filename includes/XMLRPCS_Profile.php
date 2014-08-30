@@ -1,5 +1,32 @@
 <?php
+
+/**
+ * PHP 5.2.X-compatible pseudo namespace for plugin functions.
+ *
+ * Do NOT attempt to instantiate this class - all methods are static.
+ */
 class XMLRPCS_Profile {
+	/**
+	 * Default initialization for the plugin:
+	 * - Registers the default textdomain.
+	 */
+	public static function init() {
+		$locale = apply_filters( 'plugin_locale', get_locale(), 'xmlrpcs' );
+		load_textdomain( 'xmlrpcs', WP_LANG_DIR . '/xmlrpcs/xmlrpcs-' . $locale . '.mo' );
+		load_plugin_textdomain( 'xmlrpcs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	}
+
+	/**
+	 * Replace default server implementation with custom subclass.
+	 *
+	 * @param string $server_class
+	 *
+	 * @return string
+	 */
+	public static function server( $server_class ) {
+		return 'secure_xmlrpc_server';
+	}
+
 	/**
 	 * Enqueue our admin-side scripts, styles, and localizations
 	 */
