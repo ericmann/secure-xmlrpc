@@ -79,6 +79,7 @@ In this paradigm, application secret keys should _also_ be treated as passwords 
 
 = DEV =
 * Dev change: Move all functional implementations inside our pseudo-namespace.
+* Dev change: Use a constant-time string comparison method for better security and less data leakage during authentication.
 
 = 0.1.0 =
 * First release

@@ -242,10 +242,42 @@ class XMLRPCS_Profile {
 		$body = @file_get_contents('php://input');
 		$calculated = hash( 'sha256', $secret . $body );
 
-		if ( $calculated === $hash ) {
+		if ( self::compareString( $calculated, $hash ) ) {
 			return $found;
 		} else {
 			return $user;
 		}
+	}
+
+	/**
+	 * More secure string comparison method
+	 *
+	 * @see http://code.google.com/p/oauth/
+	 *
+	 * @param string $stringA
+	 * @param string $stringB
+	 *
+	 * @return boolean
+	 */
+	public static function compareString( $stringA, $stringB ) {
+		$stringA = (string) $stringA;
+		$stringB = (string) $stringB;
+
+		if ( strlen( $stringA ) === 0 ) {
+			return false;
+		}
+
+		if ( strlen( $stringA ) !== strlen( $stringB ) ) {
+			return false;
+		}
+
+		$result = 0;
+		$len    = strlen( $stringA );
+
+		for ( $i = 0; $i < $len; $i ++ ) {
+			$result |= ord( $stringA{$i} ) ^ ord( $stringB{$i} );
+		}
+
+		return $result === 0;
 	}
 }
