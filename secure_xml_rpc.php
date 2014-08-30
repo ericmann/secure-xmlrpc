@@ -3,7 +3,7 @@
  * Plugin Name: Secure XML-RPC
  * Plugin URI:  http://wordpress.org/plugins/secure-xmlrpc
  * Description: More secure wrapper for the WordPress XML-RPC interface.
- * Version:     0.1.0
+ * Version:     1.0.0
  * Author:      Eric Mann
  * Author URI:  http://eamann.com
  * License:     GPLv2+
@@ -12,7 +12,7 @@
  */
 
 /**
- * Copyright (c) 2013 Eric Mann (email : eric@eamann.com)
+ * Copyright (c) 2013-4 Eric Mann (email : eric@eamann.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2 or, at
@@ -36,7 +36,7 @@
  */
 
 // Useful global constants
-define( 'XMLRPCS_VERSION', '0.1.0' );
+define( 'XMLRPCS_VERSION', '1.0.0' );
 define( 'XMLRPCS_URL',     plugin_dir_url( __FILE__ ) );
 define( 'XMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
 
@@ -44,35 +44,14 @@ define( 'XMLRPCS_PATH',    dirname( __FILE__ ) . '/' );
 require_once( 'includes/XMLRPCS_Profile.php' );
 require_once( 'includes/class-secure-xmlrpc-server.php' );
 
-/**
- * Default initialization for the plugin:
- * - Registers the default textdomain.
- */
-function xmlrpcs_init() {
-	$locale = apply_filters( 'plugin_locale', get_locale(), 'xmlrpcs' );
-	load_textdomain( 'xmlrpcs', WP_LANG_DIR . '/xmlrpcs/xmlrpcs-' . $locale . '.mo' );
-	load_plugin_textdomain( 'xmlrpcs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-}
-
-/**
- * Replace default server implementation with custom subclass.
- *
- * @param string $server_class
- *
- * @return string
- */
-function xmlrpcs_server( $server_class ) {
-	return 'secure_xmlrpc_server';
-}
-
 // Wireup actions
-add_action( 'init',                  'xmlrpcs_init' );
+add_action( 'init',                  array( 'XMLRPCS_Profile', 'init' ),               10, 0 );
 add_action( 'show_user_profile',     array( 'XMLRPCS_Profile', 'append_secure_keys' ), 10, 1 );
 add_action( 'admin_enqueue_scripts', array( 'XMLRPCS_Profile', 'admin_enqueues' )            );
 add_action( 'profile_update',        array( 'XMLRPCS_Profile', 'profile_update' ),     10, 1 );
 
 // Wireup filters
-add_filter( 'wp_xmlrpc_server_class', 'xmlrpcs_server' );
+add_filter( 'wp_xmlrpc_server_class', array( 'XMLRPCS_Profile', 'server' ),       10, 1 );
 add_filter( 'authenticate',           array( 'XMLRPCS_Profile', 'authenticate' ), 10, 3 );
 
 // Wireup ajax

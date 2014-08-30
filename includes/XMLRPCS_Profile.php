@@ -1,5 +1,32 @@
 <?php
+
+/**
+ * PHP 5.2.X-compatible pseudo namespace for plugin functions.
+ *
+ * Do NOT attempt to instantiate this class - all methods are static.
+ */
 class XMLRPCS_Profile {
+	/**
+	 * Default initialization for the plugin:
+	 * - Registers the default textdomain.
+	 */
+	public static function init() {
+		$locale = apply_filters( 'plugin_locale', get_locale(), 'xmlrpcs' );
+		load_textdomain( 'xmlrpcs', WP_LANG_DIR . '/xmlrpcs/xmlrpcs-' . $locale . '.mo' );
+		load_plugin_textdomain( 'xmlrpcs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	}
+
+	/**
+	 * Replace default server implementation with custom subclass.
+	 *
+	 * @param string $server_class
+	 *
+	 * @return string
+	 */
+	public static function server( $server_class ) {
+		return 'secure_xmlrpc_server';
+	}
+
 	/**
 	 * Enqueue our admin-side scripts, styles, and localizations
 	 */
@@ -101,7 +128,7 @@ class XMLRPCS_Profile {
 		$user = wp_get_current_user();
 
 		// Generate a set of unique keys
-		$key = apply_filters( 'xmlrpcs_public_key', wp_hash( time() . rand(), 'auth' ) );;
+		$key = apply_filters( 'xmlrpcs_public_key', wp_hash( time() . rand(), 'auth' ) );
 		$secret = apply_filters( 'xmlprcs_secret_key', wp_hash( time() . rand() . $key, 'auth' ) );
 
 		add_user_meta( $user->ID, '_xmlrpcs', $key, false );
@@ -213,12 +240,44 @@ class XMLRPCS_Profile {
 
 		// Calculate the hash independently
 		$body = @file_get_contents('php://input');
-		$calculated = hash( 'sha256', $secret . $body );
+		$calculated = hash( 'sha256', $secret . hash( 'sha256', $secret . $body ) );
 
-		if ( $calculated === $hash ) {
+		if ( self::compareString( $calculated, $hash ) ) {
 			return $found;
 		} else {
 			return $user;
 		}
+	}
+
+	/**
+	 * More secure string comparison method
+	 *
+	 * @see http://code.google.com/p/oauth/
+	 *
+	 * @param string $stringA
+	 * @param string $stringB
+	 *
+	 * @return boolean
+	 */
+	public static function compareString( $stringA, $stringB ) {
+		$stringA = (string) $stringA;
+		$stringB = (string) $stringB;
+
+		if ( strlen( $stringA ) === 0 ) {
+			return false;
+		}
+
+		if ( strlen( $stringA ) !== strlen( $stringB ) ) {
+			return false;
+		}
+
+		$result = 0;
+		$len    = strlen( $stringA );
+
+		for ( $i = 0; $i < $len; $i ++ ) {
+			$result |= ord( $stringA{$i} ) ^ ord( $stringB{$i} );
+		}
+
+		return $result === 0;
 	}
 }

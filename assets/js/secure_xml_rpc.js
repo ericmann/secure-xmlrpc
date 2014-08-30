@@ -1,6 +1,6 @@
-/*! Secure XML-RPC - v0.1.0
+/*! Secure XML-RPC - v1.0.0
  * http://wordpress.org/plugins/secure-xmlrpc
- * Copyright (c) 2013; * Licensed GPLv2+ */
+ * Copyright (c) 2014; * Licensed GPLv2+ */
 /*global window, jQuery */
 ( function( window, $, undefined ) {
 	'use strict';
