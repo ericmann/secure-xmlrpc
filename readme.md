@@ -115,7 +115,7 @@ Additional Information
 ----------------------
 
 Contributors:      ericmann
-Donate link:       http://wordpress.org/plugins/secure-xmlrpc
+Donate link:       http://wordpress.org/plugins/secure-xml-rpc/
 Tags:              xmlrpc, security, oauth, authentication
 Requires at least: 3.8
 Tested up to:      4.0
